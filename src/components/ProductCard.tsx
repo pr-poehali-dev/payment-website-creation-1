@@ -1,14 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
+import { Product } from "@/types/product";
 
-interface ProductCardProps {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  image?: string;
-  onSelect: (product: { id: string; name: string; price: number }) => void;
+interface ProductCardProps extends Product {
+  onSelect: (product: Product) => void;
 }
 
 const ProductCard = ({
@@ -17,13 +13,15 @@ const ProductCard = ({
   price,
   description,
   image,
+  type,
+  deliveryConfig,
   onSelect,
 }: ProductCardProps) => {
   const [isSelected, setIsSelected] = useState(false);
 
   const handleSelect = () => {
     setIsSelected(true);
-    onSelect({ id, name, price });
+    onSelect({ id, name, price, description, image, type, deliveryConfig });
   };
 
   return (
@@ -42,18 +40,33 @@ const ProductCard = ({
         )}
 
         <div className="flex-1">
-          <h3 className="text-xl font-montserrat font-semibold mb-2 text-white">
-            {name}
-          </h3>
+          <div className="flex items-center mb-2">
+            <h3 className="text-xl font-montserrat font-semibold text-white mr-2">
+              {name}
+            </h3>
+            <div
+              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                type === "digital"
+                  ? "bg-green-500/20 text-green-400"
+                  : "bg-blue-500/20 text-blue-400"
+              }`}
+            >
+              {type === "digital" ? "Цифровой" : "Физический"}
+            </div>
+          </div>
           <p className="text-gray-400 mb-4 text-sm leading-relaxed">
             {description}
           </p>
+          {type === "digital" && (
+            <div className="flex items-center text-xs text-green-400 mb-3">
+              <Icon name="Zap" size={12} className="mr-1" />
+              Мгновенная автоматическая выдача
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="text-2xl font-montserrat font-bold text-payment-orange">
-            {price.toLocaleString("ru-RU")} ₽
-          </div>
+          <div className="text-2xl font-montserrat font-bold text-payment-orange"></div>
           <Button
             onClick={handleSelect}
             className={`payment-button ${isSelected ? "bg-payment-orange hover:bg-orange-600" : ""}`}
