@@ -66,7 +66,9 @@ const ProductCard = ({
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="text-2xl font-montserrat font-bold text-payment-orange"></div>
+          <div className="text-2xl font-montserrat font-bold text-payment-orange">
+            {price.toLocaleString("ru-RU")} ₽
+          </div>
           <Button
             onClick={handleSelect}
             className={`payment-button ${isSelected ? "bg-payment-orange hover:bg-orange-600" : ""}`}
