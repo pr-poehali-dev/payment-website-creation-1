@@ -22,15 +22,17 @@ const formSchema = z.object({
 });
 
 interface PaymentFormProps {
-  selectedProduct: Product | null;
+  selectedProduct: {
+    id: string;
+    name: string;
+    price: number;
+  } | null;
   onPaymentSuccess: (paymentLink: string) => void;
-  onDeliveryComplete: (result: any) => void;
 }
 
 const PaymentForm = ({
   selectedProduct,
   onPaymentSuccess,
-  onDeliveryComplete,
 }: PaymentFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -50,26 +52,17 @@ const PaymentForm = ({
     setIsLoading(true);
 
     try {
-      // Имитация создания платежа
+      // Здесь должна быть интеграция с API Тинькофф
+      // Пока что имитируем создание платежа
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const mockPaymentLink = `https://securepayments.tinkoff.ru/pay/form/${Math.random().toString(36).substring(7)}`;
-
-      // Имитация успешной оплаты и автоматической выдачи товара
-      setTimeout(async () => {
-        const DeliveryService = (await import("./DeliveryService")).default;
-        const deliveryResult = await DeliveryService.deliverProduct(
-          selectedProduct,
-          values.email,
-        );
-        onDeliveryComplete(deliveryResult);
-      }, 3000); // Имитация времени обработки платежа
 
       onPaymentSuccess(mockPaymentLink);
 
       toast({
         title: "Платёж создан",
-        description: "После оплаты товар будет выдан автоматически",
+        description: "Ссылка на оплату успешно сгенерирована",
       });
     } catch (error) {
       toast({

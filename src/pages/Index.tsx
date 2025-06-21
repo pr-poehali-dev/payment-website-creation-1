@@ -2,12 +2,10 @@ import { useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import PaymentForm from "@/components/PaymentForm";
 import PaymentLink from "@/components/PaymentLink";
-import DeliveryResult from "@/components/DeliveryResult";
 import Icon from "@/components/ui/icon";
-import { Product } from "@/types/product";
 
-// Примеры товаров с автоматической выдачей
-const PRODUCTS: Product[] = [
+// Примеры товаров
+const PRODUCTS = [
   {
     id: "1",
     name: "Премиум подписка",
@@ -16,13 +14,6 @@ const PRODUCTS: Product[] = [
       "Получите доступ ко всем премиум функциям на год. Без рекламы, приоритетная поддержка.",
     image:
       "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop",
-    type: "digital",
-    deliveryConfig: {
-      licenseKey: "PREMIUM-LICENSE",
-      instructions:
-        "Активируйте лицензионный ключ в личном кабинете для получения премиум функций",
-      validityDays: 365,
-    },
   },
   {
     id: "2",
@@ -32,13 +23,6 @@ const PRODUCTS: Product[] = [
       "Стандартный набор функций для ежедневного использования. Отличный выбор для начинающих.",
     image:
       "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400&h=300&fit=crop",
-    type: "digital",
-    deliveryConfig: {
-      downloadUrl: "https://downloads.example.com/basic-plan",
-      instructions:
-        "Скачайте файлы по ссылке и следуйте инструкции по установке",
-      validityDays: 30,
-    },
   },
   {
     id: "3",
@@ -48,33 +32,33 @@ const PRODUCTS: Product[] = [
       "Решение для бизнеса с расширенными возможностями и персональной поддержкой.",
     image:
       "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop",
-    type: "physical",
   },
 ];
 
 const Index = () => {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<{
+    id: string;
+    name: string;
+    price: number;
+  } | null>(null);
   const [paymentLink, setPaymentLink] = useState<string>("");
-  const [deliveryResult, setDeliveryResult] = useState<any>(null);
 
-  const handleProductSelect = (product: Product) => {
+  const handleProductSelect = (product: {
+    id: string;
+    name: string;
+    price: number;
+  }) => {
     setSelectedProduct(product);
-    setPaymentLink("");
-    setDeliveryResult(null);
+    setPaymentLink(""); // Сбрасываем ссылку при выборе нового товара
   };
 
   const handlePaymentSuccess = (link: string) => {
     setPaymentLink(link);
   };
 
-  const handleDeliveryComplete = (result: any) => {
-    setDeliveryResult(result);
-  };
-
   const handleReset = () => {
     setSelectedProduct(null);
     setPaymentLink("");
-    setDeliveryResult(null);
   };
 
   return (
@@ -137,17 +121,10 @@ const Index = () => {
 
           {/* Right Column - Payment */}
           <div>
-            {deliveryResult ? (
-              <DeliveryResult
-                result={deliveryResult}
-                productName={selectedProduct?.name || ""}
-                onClose={handleReset}
-              />
-            ) : !paymentLink ? (
+            {!paymentLink ? (
               <PaymentForm
                 selectedProduct={selectedProduct}
                 onPaymentSuccess={handlePaymentSuccess}
-                onDeliveryComplete={handleDeliveryComplete}
               />
             ) : (
               <PaymentLink
